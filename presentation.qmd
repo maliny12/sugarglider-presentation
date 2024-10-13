@@ -1,23 +1,22 @@
 ---
-title: "sugarglider"
-author: "Maliny Po, S. Nathan Yang, H. Sherry Zhang, Dianne Cook"
-format:
-  revealjs: 
-    auto-stretch: false
-    slide-number: true
-    transition: slide
-    preview-links: true
-    embed-resources: true
+format: 
+  revealjs:
+    theme: ["theme/q-theme.scss"]
+    slide-number: c/t
     logo: Monash_University_logo.png
-    css: style.css
-knitr: 
-  opts_chunk: 
-    out.width: "100%"
-    R.options:
-      knitr.table.html.attr: "quarto-disable-processing=true"
+    footer: "[https://github.com/maliny12/sugarglider](https://github.com/maliny12/sugarglider?tab=readme-ov-file)"
+    code-copy: true
+    center-title-slide: false
+    # include-in-header: heading-meta.html
+    code-link: true
+    code-overflow: wrap
+    highlight-style: a11y
+    height: 1080
+    width: 1920
+execute: 
+  eval: true
+  echo: false
 ---
-
-# Software 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #| label: setup
@@ -29,237 +28,129 @@ library(ggthemes)
 library(gridExtra)
 library(grid)
 library(tidyverse)
+library(knitr)
+```
+
+<h1> `sugarglider` </h1>
+
+<h2> Create Glyph Maps for Spatiotemporal Data </h2>
+
+<hr>
+
+<h4> Maliny Po, S. Nathan Yang, H. Sherry Zhang, Dianne Cook </h4>
+
+<br>
+
+<h4> `r fontawesome::fa("github", "black")` &nbsp; [https://github.com/maliny12/sugarglider](https://github.com/maliny12/sugarglider?tab=readme-ov-file)
+
+![](figures/sugarglider.svg){.absolute top=300 left=1000 width="800"}
+
+## Motivation
+
+> Certain aspects of spatiotemporal data cannot be effectively represented by line glyphs. `sugarglider` enables users to visualize variations in the data through the use of ribbon and segment plots.
+
+```{r, fig.align='center', out.width="60%"}
+include_graphics("figures/cubble_example.png")
 ```
 
 
-![](figures/gsoc2017.png){fig-align="center"}
- 
-:::{.r-stack}
-Maliny Po, S. Nathan Yang, H. Sherry Zhang, Dianne Cook
-::: 
+## Geometries
 
-## ribbon: data visualization package for spatial-temporal data
+```{r, fig.align='center'}
+include_graphics("figures/ribbon-segment.png")
+```
 
-#### 🤔 What are glyph maps? 
-
-A concept purposed by Wickham et al. (2012). The main idea is to convert temporal coordinates into spatial ones, allowing a time series plot to be visualized on a map.
-
-#### 💪 Motivation
-
-Glyph Maps enable the visualization of data across geographic regions and various time periods. The ribbon package enhances this capability by providing additional features with **geom_glyph_ribbon()**.
-
-## How **geom_glyph_ribbon()** works
+## Overview 
 
 ::: {.columns}
 
 ::: {.column width="50%"}
 
-
-![](figures/usage.png)
-:::
-
-::: {.column width="50%"}
-
-- This function creates a ribbon geometry designed to display glyphs based on the combination of `x_major` and `y_major`. (Ex: longitude, Latitude)
-
-- For each `x_minor` value, the function displays a y interval defined by `ymin_minor` and `ymax_minor`.
-
-:::
-
-:::
-
-## 💻 Demo
-
-The National Oceanic and Atmosphere Administration (NOAA) provides weather data from stations all over the world. The `aus_temp` dataset contains daily temperature and precipitation levels recorded at various stations across Australia in the year 2020.
-
-```{r, echo=FALSE}
-kable(aus_temp[1:5,]) |> 
-  kable_styling(full_width = FALSE, font_size = 25) |>
-  add_footnote("The data was retrieved using the rnoaa package.")
-```
-
-## 💻 Demo
-
-::: {.columns}
-
-::: {.column width="60%"}
-```{r, eval = FALSE, echo=TRUE}
-
-aus_temp |>
-  ggplot(aes(x_major = long,
-             y_major = lat, 
-             x_minor = month,
-             ymin_minor = tmin,
-             ymax_minor = tmax)) +
-  geom_sf(data = abs_ste,
-          color = grey(0.7),
-          fill = NA, inherit.aes = FALSE) +
-  add_glyph_boxes() +      
-  add_ref_lines() +         
-  geom_glyph_ribbon() +     
-  theme_map() +
-  coord_sf(xlim = c(110, 155)) +
-  labs(title = "Australian daily temperature, 2020")
-```
-
-:::
-
-::: {.column width="40%"}
-![](figures/demo.png)
-:::
-
-:::
-
-## More examples on Github
-
-:::{layout-ncol="2"}
-
-```{r, echo=FALSE}
-p1 <- aus_temp |>
-   ggplot(aes(x_major = long, y_major = lat,
-              x_minor = month, ymin_minor = tmin, ymax_minor = tmax)) +
-  geom_sf(data = abs_ste, color = grey(0.7), fill = NA,
-          inherit.aes = FALSE)  +
-  add_glyph_boxes(color = "dodgerblue4") +
-  add_ref_lines(color = "dodgerblue4") +
-  geom_glyph_ribbon(global_rescale = FALSE, color = "dodgerblue4", fill = "dodgerblue4") +
-  theme_map() +
-  coord_sf(xlim = c(110,155)) +
-  labs(title = "Local Rescale") +
-  theme(plot.title = element_text(hjust = 0.5),
-        panel.background = element_rect(fill = "white", color = NA),
-        plot.background = element_rect(fill = "white", color = NA))
-
-p2 <- aus_temp |>
-   ggplot(aes(x_major = long, y_major = lat,
-              x_minor = month, ymin_minor = tmin, ymax_minor = tmax)) +
-  geom_sf(data = abs_ste, color = grey(0.7), fill = NA,
-          inherit.aes = FALSE)  +
-   add_glyph_boxes(color = "dodgerblue4") +
-   add_ref_lines(color = "dodgerblue4") +
-  geom_glyph_ribbon(global_rescale = TRUE, color = "dodgerblue4", fill = "dodgerblue4") +
-  theme_map() +
-  coord_sf(xlim = c(110,155)) +
-  labs(title = "Global Rescale") +
-  theme(plot.title = element_text(hjust = 0.5),
-        panel.background = element_rect(fill = "white", color = NA),
-        plot.background = element_rect(fill = "white", color = NA))
-
-# Using gridExtra and grid packages to add neatline to the plot
-grid.arrange(p1, p2, ncol = 2) 
-grid.rect(
-    width = 0.98,
-    height = 0.98,
-    gp = grid::gpar(
-      lwd = 0.25,
-      col = "black",
-      fill = NA
-    )
-  )
-
-
-```
-
-
-```{r, echo=FALSE}
-prcp <- aus_temp |>
-   group_by(id) |>
-   mutate(prcp = mean(prcp, na.rm = TRUE)) |>
-   ggplot(aes(x_major = long, y_major = lat, x_minor = month,
-              ymin_minor = tmin, ymax_minor = tmax,
-              fill = prcp, color = prcp)) +
-  geom_sf(data = abs_ste, color = grey(0.7), fill = NA,
-          inherit.aes = FALSE)  +
-   add_glyph_boxes() +
-   add_ref_lines() +
-   geom_glyph_ribbon() +
-   coord_sf(xlim = c(112,155)) +
-  theme_map() +
-  theme(legend.position.inside = c(.3,0), 
-        legend.direction = "horizontal",
-        panel.background = element_rect(fill = "white", color = NA),
-        plot.background = element_rect(fill = "white", color = NA)) +
-  scale_fill_gradientn(colors = c("#ADD8E6", "#2b5e82", "dodgerblue4")) +
-  scale_color_gradientn(colors = c( "#ADD8E6", "#2b5e82", "dodgerblue4")) 
-  
-
-# Using gridExtra and grid packages to add neat line to the plot
-grid.arrange(prcp, ncol = 1) 
-grid.rect(
-    width = 0.98,
-    height = 0.98,
-    gp = grid::gpar(
-      lwd = 0.25,
-      col = "black",
-      fill = NA
-    )
-  )
-```
-
-```{r, echo=FALSE}
-fact <- historical_temp |>
-  filter(id %in% c("ASN00026021", "ASN00085291", "ASN00084143")) |>
-   ggplot(aes(color = factor(year), fill = factor(year), group = interaction(year,id),
-              x_major = long, y_major = lat, x_minor = month, 
-              ymin_minor = tmin, ymax_minor = tmax)) +
-  geom_sf(data = abs_ste |> filter(NAME == "Victoria"),
-           fill = NA, color = grey(0.7),
-           inherit.aes = FALSE)  +
-   add_glyph_boxes() +
-   add_ref_lines() +
-   geom_glyph_ribbon(alpha = 0.5) +
-   coord_sf(xlim = c(140,150)) +
-  labs(x = "Longitude", y = "Latitude") +
-  theme_map() +
-  theme(legend.position.inside = c(.3,0.9), 
-        legend.direction = "horizontal",
-        panel.background = element_rect(fill = "white", color = NA),
-        plot.background = element_rect(fill = "white", color = NA)) +
-  scale_colour_wsj("colors6") +
-  scale_fill_wsj("colors6")
-
-
-# Using gridExtra and grid packages to add neat line to the plot
-grid.arrange(fact, ncol = 1) 
-grid.rect(
-    width = 0.98,
-    height = 0.98,
-    gp = grid::gpar(
-      lwd = 0.25,
-      col = "black",
-      fill = NA
-    )
-  )
-```
-
-```{r, echo=FALSE}
-legend <- aus_temp |>
-   ggplot(aes(x_major = long, y_major = lat,
-              x_minor = month, ymin_minor = tmin, ymax_minor = tmax)) +
-  geom_sf(data = abs_ste ,
-           fill = NA, color = grey(0.7),
-           inherit.aes = FALSE)  +
+```{r, eval=FALSE, echo=TRUE}
+ggplot(data, 
+    aes(x_major = long, 
+        y_major = lat,
+        x_minor = month, 
+        ymin_minor = minimum,
+        ymax_minor = maximum)) +
+  # Base map
+  geom_sf(abs_ste) +
+  # Glyph boxes
   add_glyph_boxes() +
+  # Reference lines
   add_ref_lines() +
-  geom_glyph_ribbon() + 
-  add_glyph_legend() + 
-  theme_map() 
-
-# Using gridExtra and grid packages to add neat line to the plot
-grid.arrange(legend, ncol = 1) 
-grid.rect(
-    width = 0.98,
-    height = 0.98,
-    gp = grid::gpar(
-      lwd = 0.25,
-      col = "black",
-      fill = NA
-    )
-  )
+  # Ribbon Glyphs
+  geom_glyph_ribbon() +
+  # Legend
+  add_glyph_legend()
 ```
+
+<p>
+  <img src="figures/glyphs.png" alt="Glyph map" 
+  width="500" height="300" style="margin-left: 150px;">
+</p>
+
+
 :::
 
-# Q&A
+::: {.column width="50%"}
+
+<p align="center">
+  <img src="figures/glyphmap-layers.png" alt="Glyph map components">
+</p>
+
+:::
+
+:::
+ 
+## Spatial-temporal transformation
+
+```{r, fig.align='center'}
+include_graphics("figures/linear-algebra.png")
+```
+
+## 💻 Demo
+
+```{r, fig.align='center', out.width="60%"}
+include_graphics("figures/basic_example.png")
+```
+
+## 💻 Demo
+
+```{r, fig.align='center', out.width="60%"}
+include_graphics("figures/girafe-screenshot.jpg")
+```
+
+## 💻 Demo 
+
+```{r, out.width="90%", fig.align='center'}
+include_graphics("figures/leaflet-screenshot.jpg")
+```
+
+# `Next Steps`
+
+* Publish version 1.0.1 to CRAN.
+* Submit the software paper to R Journal.
+
+.  .  .
+
+
+<p align="center">
+  <img src="figures/Q&A.png" alt="Q&A">
+</p>
+
+# Meet the `sugarglider` team
+
+<p style="display: flex;
+justify-content: center; align-items: center; height: 100vh;">
+  <img src="figures/team.jpg" alt="Q&A">
+</p>
+
+
+
+
+
+
 
 
 

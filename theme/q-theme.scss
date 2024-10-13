@@ -1,0 +1,44 @@
+/*-- scss:defaults --*/
+/*-- Code from github.com/jthomasmock/arrow-dplyr --*/ 
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+@import url(https://fonts.googleapis.com/css?family=Fira+Mono:400,700);
+
+// fonts
+$font-family-sans-serif: "Lato", sans-serif !default;
+$font-family-serif: "Lato", serif !default;
+$font-family-monospace: "Fira Mono", monospace !default;
+
+// colors
+$body-bg: #FAF9F6 !default;
+$body-color: #000 !default;
+$link-color: #257bc8 !default;
+$code-block-bg: #f2f2f2;
+$code-block-font-size: 0.7em;
+
+$presentation-font-smaller: 0.7rem;
+
+/*-- scss:rules --*/
+
+h1 {
+  font-family: "Fira Mono";
+  font-size: 24px;
+}
+
+.reveal code {
+    color: #257bc8;
+}
+
+.author, .date {
+  font-size: 34px;
+}
+
+#cb1.sourceCode.cell-code {
+    width: 800px;
+    height: 600px;
+}
+
+pre.sourceCode.numberSource.r.number-lines.code-with-copy {
+    width: 800px;
+    height: 600px;
+}
