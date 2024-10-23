@@ -3,7 +3,7 @@ format:
   revealjs:
     theme: ["theme/q-theme.scss"]
     slide-number: c/t
-    logo: Monash_University_logo.png
+    logo: figures/Monash_University_logo.png
     footer: "[https://github.com/maliny12/sugarglider](https://github.com/maliny12/sugarglider?tab=readme-ov-file)"
     code-copy: true
     center-title-slide: false
